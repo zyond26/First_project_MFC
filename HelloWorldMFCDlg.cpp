@@ -221,7 +221,6 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
 	ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-	
 	ofn.lpstrDefExt = 'txt';
 	if (GetSaveFileName(&ofn)) {
 		[in, out] LPOPENFILENAMEW unnamedParam1;
@@ -232,10 +231,9 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 void CHelloWorldMFCDlg::OnBnClickedButton_load()
 {
 	// TODO: Add your control notification handler code here
-	
+	TCHAR szFile[_MAX_PATH];
+	ZeroMemory 
 }
-
-
 
 void CHelloWorldMFCDlg::OnEnChangeEdit_editbox()
 {
