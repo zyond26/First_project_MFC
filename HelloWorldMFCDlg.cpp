@@ -199,11 +199,8 @@ void CHelloWorldMFCDlg::OnBnClickedButton_choose()
 void CHelloWorldMFCDlg::OnBnClickedButton_save()
 {
 	// TODO: Add your control notification handler code here
-	TCHAR folderPath[_MAX_PATH];
-	GetWindowText(HWND)
-
-
-	
+	CString path;
+	edit_path.GetWindowTextW(path);
 	CString editbox;
 	edit_box.GetWindowTextW(editbox);
 	if (path.IsEmpty()) {
@@ -214,7 +211,21 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 		AfxMessageBox(_T(" please text something"));
 		return;
 	}
-
+	TCHAR szFileName[_MAX_PATH];
+	OPENFILENAME ofn;
+	char szPath[_MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = m_hWnd;
+	ofn.lpstrFile = szFileName;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+	ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
+	
+	ofn.lpstrDefExt = 'txt';
+	if (GetSaveFileName(&ofn)) {
+		[in, out] LPOPENFILENAMEW unnamedParam1;
+	}
 	AfxMessageBox(_T("File saved successfully!"));
 
 }
