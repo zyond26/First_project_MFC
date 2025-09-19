@@ -1,4 +1,4 @@
-
+﻿
 // HelloWorldMFCDlg.cpp : implementation file
 //
 
@@ -64,9 +64,8 @@ void CHelloWorldMFCDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_save, btn_save);
 	DDX_Control(pDX, IDC_BUTTON_load, btn_load);
 	DDX_Control(pDX, IDC_BUTTON_choose, btn_choose);
-	DDX_Control(pDX, IDC_EDIT_path, edit_path);
 	DDX_Control(pDX, IDC_EDIT_editbox, edit_box);
-	DDX_Control(pDX, IDC_STATIC_url, static_url);
+	DDX_Control(pDX, IDC_TEXT_path, text_path);
 }
 
 BEGIN_MESSAGE_MAP(CHelloWorldMFCDlg, CDialogEx)
@@ -76,10 +75,7 @@ BEGIN_MESSAGE_MAP(CHelloWorldMFCDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_save, &CHelloWorldMFCDlg::OnBnClickedButton_save)
 	ON_BN_CLICKED(IDC_BUTTON_load, &CHelloWorldMFCDlg::OnBnClickedButton_load)
 	ON_BN_CLICKED(IDC_BUTTON_choose, &CHelloWorldMFCDlg::OnBnClickedButton_choose)
-	ON_EN_CHANGE(IDC_EDIT_editbox, &CHelloWorldMFCDlg::OnEnChangeEdit_editbox)
-	ON_EN_CHANGE(IDC_EDIT_path, &CHelloWorldMFCDlg::OnEnChangeEdit_path)
 END_MESSAGE_MAP()
-
 
 // CHelloWorldMFCDlg message handlers
 
@@ -166,74 +162,120 @@ HCURSOR CHelloWorldMFCDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+// ---------------------------------- BUtton -----------------------------
+
 void CHelloWorldMFCDlg::OnBnClickedButton_choose()
 {
 	// TODO: Add your control notification handler code here
-
-	BROWSEINFO bi;
-	ZeroMemory(&bi, sizeof(bi));
-	TCHAR szDisplayname[_MAX_PATH];
-	szDisplayname[0] = '\0';
-	bi.hwndOwner = m_hWnd;
-	bi.pszDisplayName = szDisplayname;
-	bi.lpszTitle = _T("Please select a folder to save the file:");
-
-	LPITEMIDLIST pIdl = SHBrowseForFolder(&bi);
-	if (pIdl != NULL)
+	// Khởi tạo bắt buộc
+	BROWSEINFO bi;  // bi như là tên 1 hộp chứ thông tin hộp thoại chọn thư mục 
+	ZeroMemory(&bi, sizeof(bi));   // lệnh này để reset kiểu giải phóng nếu có dữ liệu cũ
+	bi.hwndOwner = m_hWnd; // m_hWnd là cửa sổ chính của chương trình.
+	LPITEMIDLIST pIdl = SHBrowseForFolder(&bi);   // SHBrowseForFolder là hàm mở hộp thoại chọn thư mục
+	// pIdl gọi như là nơi ghi địa chỉ của thư mục đã chọn 
+	if (pIdl != NULL) 
 	{
-		TCHAR szPath[_MAX_PATH];
-		szPath[0] = '\0';
-		if (SHGetPathFromIDList(pIdl, szPath))
+		TCHAR szPath[_MAX_PATH]; 
+		//TCHAR là kiểu ký tự (có thể là char hoặc wchar_t).
+		//szPath[_MAX_PATH] → một chiếc hộp(mảng) đủ lớn để chứa đường dẫn thư mục, tối đa _MAX_PATH ký tự(~260).
+		szPath[0] = '\0'; // Đặt ký tự đầu tiên = \0 nghĩa là xóa sạch nội dung cũ trước khi ghi cái khác vào 
+		if (SHGetPathFromIDList(pIdl, szPath)) // SHGetPath... là lấy đường dẫn từ pIdl cho xuất vào szPath
 		{
-			edit_path.SetWindowTextW(szPath);
-		}
-		LPMALLOC pMalloc = NULL;
-		if (SUCCEEDED(SHGetMalloc(&pMalloc)))
-		{
-			pMalloc->Free(pIdl);
-			pMalloc->Release();
+			text_path.SetWindowTextW(szPath); // Hiển thị trên text_box của UI
 		}
 	}
 }
+
 
 void CHelloWorldMFCDlg::OnBnClickedButton_save()
 {
-	// TODO: Add your control notification handler code here
-	CString path;
-	edit_path.GetWindowTextW(path);
-	CString editbox;
-	edit_box.GetWindowTextW(editbox);
-	if (path.IsEmpty()) {
-		AfxMessageBox(_T("Please choose a path first!"));
-		return;
-	}  
-	if (editbox.IsEmpty()) {
-		AfxMessageBox(_T(" please text something"));
+	// Khai báo kiểm tra các mục đã được chọn chưa 
+	TCHAR folderPath[MAX_PATH];
+	GetDlgItemText(IDC_TEXT_path, folderPath, MAX_PATH); // lấy đường dẫn thư mục vừa chọn bên trên gán vào folderPath bao gồm ID; tên biến; kích thước tối đa
+
+	if (_tcslen(folderPath) == 0) //_tcslen hàm tính độ dài chuỗi TCHAR.
+	{
+		MessageBox(_T("Please choose a folder first"), _T("Warning!!!"), MB_OK);
 		return;
 	}
-	TCHAR szFileName[_MAX_PATH];
+
+	TCHAR content[4096];
+	GetDlgItemText(IDC_EDIT_editbox, content, 4096); // lấy nội dung đã nhập trong edit box gán vào content
+
+	if (_tcslen(content) == 0) // _tcslen hàm để tính độ dài chuỗi TCHAR.
+	{
+		MessageBox(_T("Please text something"), _T("Warning!!!"), MB_OK);
+		return;
+	}
+
+	TCHAR szFile[MAX_PATH] = _T(""); // Tạo một mảng ký tự để lưu tên file - mảng rỗng
+	OPENFILENAME ofn;  // cấu trúc khởi tạo cấu hình save/open files
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn); // đặt kích thước là ofn để đọc đúng dữ liệu
+	ofn.hwndOwner = m_hWnd; // set là hiển thị ở cửa số chính
+	ofn.lpstrFile = szFile;  // hiển thị hộp thoại để tự đặt tên file lưu vào folder
+	ofn.nMaxFile = MAX_PATH; // đặt kích thước cho file là tối đa để ko bị vượt quá 
+	ofn.lpstrInitialDir = folderPath;  // mở thư mục đã chọn 
+	ofn.lpstrFilter = _T("Text Documents\0*.txt\0All Files\0*.*\0"); // chỉ hiển thị txt hoặc all files
+	ofn.nFilterIndex = 1;
+	ofn.lpstrDefExt = _T("txt");  // tự động thêm .txt cho file
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT; // OFN_OVERWRITEPROMPT là nếu file trùng tên, hỏi có muốn ghi đè không.
+
+	if (GetSaveFileName(&ofn))
+	{
+		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_WRITE, 0, NULL,
+			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hFile != INVALID_HANDLE_VALUE)
+		{
+			DWORD dwWritten;
+			WriteFile(hFile, content, (DWORD)(_tcslen(content) * sizeof(TCHAR)), &dwWritten, NULL);
+			CloseHandle(hFile);
+			MessageBox(_T("Save file successfully!"), _T("Warning!!!"), MB_OK);
+		}
+	}
+}
+
+void CHelloWorldMFCDlg::OnBnClickedButton_load()
+{
+	TCHAR folderPath[MAX_PATH];
+	GetDlgItemText(IDC_TEXT_path, folderPath, MAX_PATH); // lấy đường dẫn 
+
+	if (_tcslen(folderPath) == 0)
+	{
+		MessageBox(_T("Please choose a folder first!"), _T("Warninggg !!!"), MB_OK);
+		return;
+	}
+
+	TCHAR szFile[MAX_PATH] = _T("");
 	OPENFILENAME ofn;
-	char szPath[_MAX_PATH] = "";
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = m_hWnd;
-	ofn.lpstrFile = szFileName;
+	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
-	ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-	ofn.lpstrDefExt = 'txt';
-	if (GetSaveFileName(&ofn)) {
-		[in, out] LPOPENFILENAMEW unnamedParam1;
-	}
-	AfxMessageBox(_T("File saved successfully!"));
+	ofn.lpstrInitialDir = folderPath;
+	ofn.lpstrFilter = _T("Text Documents\0*.txt\0All Files\0*.*\0");
+	ofn.nFilterIndex = 1;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST; // check xem file có tồn tại không 
 
+	if (GetOpenFileName(&ofn))
+	{
+		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, NULL,
+			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hFile != INVALID_HANDLE_VALUE)
+		{
+			DWORD dwRead;
+			TCHAR buf[4096] = { 0 };
+			ReadFile(hFile, buf, sizeof(buf) - sizeof(TCHAR), &dwRead, NULL);
+			buf[dwRead / sizeof(TCHAR)] = 0;
+			CloseHandle(hFile);
+
+			SetDlgItemText(IDC_EDIT_editbox, buf);
+			MessageBox(_T("Load file successfully!"), _T("Warningg!!!"), MB_OK);
+		}
+	}
 }
-void CHelloWorldMFCDlg::OnBnClickedButton_load()
-{
-	// TODO: Add your control notification handler code here
-	TCHAR szFile[_MAX_PATH];
-	ZeroMemory 
-}
+
 
 void CHelloWorldMFCDlg::OnEnChangeEdit_editbox()
 {
@@ -244,8 +286,7 @@ void CHelloWorldMFCDlg::OnEnChangeEdit_editbox()
 
 	// TODO:  Add your control notification handler code here
 }
-
-void CHelloWorldMFCDlg::OnEnChangeEdit_path()
+void CHelloWorldMFCDlg::OnEnChangeEdit_textpath()
 {
 	// TODO:  If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialogEx::OnInitDialog()

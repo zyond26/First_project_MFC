@@ -35,12 +35,11 @@ public:
 	afx_msg void OnBnClickedButton_save();
 	afx_msg void OnBnClickedButton_choose();
 	afx_msg void OnEnChangeEdit_editbox();
-	afx_msg void OnEnChangeEdit_path();
+	afx_msg void OnEnChangeEdit_textpath();
 protected:
 	CButton btn_save;
 	CButton btn_load;
 	CButton btn_choose;
-	CEdit edit_path;
 	CEdit edit_box;
-	CStatic static_url;
+	CEdit text_path;
 };
