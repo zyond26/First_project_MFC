@@ -17,35 +17,35 @@ using namespace std;
 
 // CAboutDlg dialog used for App About
 
-class CAboutDlg : public CDialogEx
-{
-public:
-	CAboutDlg();
-
-// Dialog Data
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_ABOUTBOX };
-#endif
-
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-// Implementation
-protected:
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
-{
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-END_MESSAGE_MAP()
+//class CAboutDlg : public CDialogEx
+//{
+//public:
+//	CAboutDlg();
+//
+//// Dialog Data
+//#ifdef AFX_DESIGN_TIME
+//	enum { IDD = IDD_ABOUTBOX };
+//#endif
+//
+//	protected:
+//	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+//
+//// Implementation
+//protected:
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
+//{
+//}
+//
+//void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+//{
+//	CDialogEx::DoDataExchange(pDX);
+//}
+//
+//BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+//END_MESSAGE_MAP()
 
 
 // CHelloWorldMFCDlg dialog
@@ -69,7 +69,6 @@ void CHelloWorldMFCDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CHelloWorldMFCDlg, CDialogEx)
-	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_save, &CHelloWorldMFCDlg::OnBnClickedButton_save)
@@ -85,23 +84,23 @@ BOOL CHelloWorldMFCDlg::OnInitDialog()
 
 	// Add "About..." menu item to system menu.
 
-	// IDM_ABOUTBOX must be in the system command range.
-	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-	ASSERT(IDM_ABOUTBOX < 0xF000);
+	//// IDM_ABOUTBOX must be in the system command range.
+	//ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
+	//ASSERT(IDM_ABOUTBOX < 0xF000);
 
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != nullptr)
-	{
-		BOOL bNameValid;
-		CString strAboutMenu;
-		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
-		ASSERT(bNameValid);
-		if (!strAboutMenu.IsEmpty())
-		{
-			pSysMenu->AppendMenu(MF_SEPARATOR);
-			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
-		}
-	}
+	//CMenu* pSysMenu = GetSystemMenu(FALSE);
+	//if (pSysMenu != nullptr)
+	//{
+	//	BOOL bNameValid;
+	//	CString strAboutMenu;
+	//	bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
+	//	ASSERT(bNameValid);
+	//	if (!strAboutMenu.IsEmpty())
+	//	{
+	//		pSysMenu->AppendMenu(MF_SEPARATOR);
+	//		pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
+	//	}
+	//}
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -113,19 +112,19 @@ BOOL CHelloWorldMFCDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CHelloWorldMFCDlg::OnSysCommand(UINT nID, LPARAM lParam)
-{
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
-	{
-		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
-	}
-	else
-	{
-		CDialogEx::OnSysCommand(nID, lParam);
-	}
-}
-
+//void CHelloWorldMFCDlg::OnSysCommand(UINT nID, LPARAM lParam)
+//{
+//	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
+//	{
+//		CAboutDlg dlgAbout;
+//		dlgAbout.DoModal();
+//	}
+//	else
+//	{
+//		CDialogEx::OnSysCommand(nID, lParam);
+//	}
+//}
+//
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
@@ -156,7 +155,7 @@ void CHelloWorldMFCDlg::OnPaint()
 }
 
 // The system calls this function to obtain the cursor to display while the user drags
-//  the minimized window.
+  //the minimized window.
 HCURSOR CHelloWorldMFCDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -184,8 +183,7 @@ void CHelloWorldMFCDlg::OnBnClickedButton_choose()
 			text_path.SetWindowTextW(szPath); // Hiển thị trên text_box của UI
 		}
 	}
-}
-
+}				
 
 void CHelloWorldMFCDlg::OnBnClickedButton_save()
 {
@@ -195,42 +193,43 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 
 	if (_tcslen(folderPath) == 0) //_tcslen hàm tính độ dài chuỗi TCHAR.
 	{
-		MessageBox(_T("Please choose a folder first"), _T("Warning!!!"), MB_OK);
+		MessageBox(_T("Please choose a folder first"), _T(" ⚠️ Warning!!!"), MB_OK);
 		return;
 	}
 
 	TCHAR content[4096];
-	GetDlgItemText(IDC_EDIT_editbox, content, 4096); // lấy nội dung đã nhập trong edit box gán vào content
+	GetDlgItemText(IDC_EDIT_editbox, content, 4096); // lấy nội dung đã nhập trong edit box gán vào content < tương tự như trên> 
 
 	if (_tcslen(content) == 0) // _tcslen hàm để tính độ dài chuỗi TCHAR.
 	{
-		MessageBox(_T("Please text something"), _T("Warning!!!"), MB_OK);
+		MessageBox(_T("Please text something"), _T(" ⚠️ Warning!!!"), MB_OK);
 		return;
 	}
 
 	TCHAR szFile[MAX_PATH] = _T(""); // Tạo một mảng ký tự để lưu tên file - mảng rỗng
-	OPENFILENAME ofn;  // cấu trúc khởi tạo cấu hình save/open files
+	OPENFILENAME ofn;  // cấu trúc khởi tạo cấu hình save/open files  // ofn :open file name
 	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn); // đặt kích thước là ofn để đọc đúng dữ liệu
+	ofn.lStructSize = sizeof(ofn); // khởi tạo kích thước là ofn để đọc đúng dữ liệu
 	ofn.hwndOwner = m_hWnd; // set là hiển thị ở cửa số chính
 	ofn.lpstrFile = szFile;  // hiển thị hộp thoại để tự đặt tên file lưu vào folder
-	ofn.nMaxFile = MAX_PATH; // đặt kích thước cho file là tối đa để ko bị vượt quá 
+	ofn.nMaxFile = MAX_PATH; // đặt kích thước cho tên file là tối đa để ko bị vượt quá 
 	ofn.lpstrInitialDir = folderPath;  // mở thư mục đã chọn 
 	ofn.lpstrFilter = _T("Text Documents\0*.txt\0All Files\0*.*\0"); // chỉ hiển thị txt hoặc all files
 	ofn.nFilterIndex = 1;
 	ofn.lpstrDefExt = _T("txt");  // tự động thêm .txt cho file
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT; // OFN_OVERWRITEPROMPT là nếu file trùng tên, hỏi có muốn ghi đè không.
 
-	if (GetSaveFileName(&ofn))
+	if (GetSaveFileName(&ofn)) // bắt đầu hiển thị hộp thoại lưu file
 	{
-		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_WRITE, 0, NULL,
+		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_WRITE, 0, NULL, // tạo file gồm : đặt tên file; cho phép ghi write 
 			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile != INVALID_HANDLE_VALUE)
+		// create_always là luôn tạo file mới nếu có tên tồn tại thì ghi đè 
+		if (hFile != INVALID_HANDLE_VALUE)  // kiểm tra xem đã thành công chưa 
 		{
 			DWORD dwWritten;
-			WriteFile(hFile, content, (DWORD)(_tcslen(content) * sizeof(TCHAR)), &dwWritten, NULL);
+			WriteFile(hFile, content, (DWORD)(_tcslen(content) * sizeof(TCHAR)), &dwWritten, NULL); // oke thì viết vào file từ kích thước của content
 			CloseHandle(hFile);
-			MessageBox(_T("Save file successfully!"), _T("Warning!!!"), MB_OK);
+			MessageBox(_T("Save file successfully!"), _T(" ⚠️ Warning!!!"), MB_OK);
 		}
 	}
 }
@@ -240,13 +239,13 @@ void CHelloWorldMFCDlg::OnBnClickedButton_load()
 	TCHAR folderPath[MAX_PATH];
 	GetDlgItemText(IDC_TEXT_path, folderPath, MAX_PATH); // lấy đường dẫn 
 
-	if (_tcslen(folderPath) == 0)
+	if (_tcslen(folderPath) == 0) // _tcslen là hàm tính độ dài chuỗi Tchar
 	{
-		MessageBox(_T("Please choose a folder first!"), _T("Warninggg !!!"), MB_OK);
+		MessageBox(_T("Please choose a folder first!"), _T(" ⚠️ Warninggg !!!"), MB_OK);
 		return;
 	}
 
-	TCHAR szFile[MAX_PATH] = _T("");
+	TCHAR szFile[MAX_PATH] = _T(""); // khời tạo 1 mảng rỗng đọc tên
 	OPENFILENAME ofn;
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
@@ -258,9 +257,9 @@ void CHelloWorldMFCDlg::OnBnClickedButton_load()
 	ofn.nFilterIndex = 1;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST; // check xem file có tồn tại không 
 
-	if (GetOpenFileName(&ofn))
+	if (GetOpenFileName(&ofn))  // bắt đầu mở hộp thoại lưu file 
 	{
-		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, NULL,
+		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, NULL, // tạo file mới 
 			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile != INVALID_HANDLE_VALUE)
 		{
@@ -271,15 +270,13 @@ void CHelloWorldMFCDlg::OnBnClickedButton_load()
 			CloseHandle(hFile);
 
 			SetDlgItemText(IDC_EDIT_editbox, buf);
-			MessageBox(_T("Load file successfully!"), _T("Warningg!!!"), MB_OK);
+			MessageBox(_T("Load file successfully!"), _T(" ⚠️ Warningg!!!"), MB_OK);
 		}
 	}
 }
-
-
 void CHelloWorldMFCDlg::OnEnChangeEdit_editbox()
 {
-	// TODO:  If this is a RICHEDIT control, the control will not
+	 //TODO:  If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialogEx::OnInitDialog()
 	// function and call CRichEditCtrl().SetEventMask()
 	// with the ENM_CHANGE flag ORed into the mask.
@@ -295,3 +292,4 @@ void CHelloWorldMFCDlg::OnEnChangeEdit_textpath()
 
 	// TODO:  Add your control notification handler code here
 }
+// thu nha demo hihih 
