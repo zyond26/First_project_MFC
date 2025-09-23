@@ -165,58 +165,55 @@ HCURSOR CHelloWorldMFCDlg::OnQueryDragIcon()
 
 void CHelloWorldMFCDlg::OnBnClickedButton_choose()
 {
-	// TODO: Add your control notification handler code here
 	// Khởi tạo bắt buộc
-	BROWSEINFO bi;  // bi như là tên 1 hộp chứ thông tin hộp thoại chọn thư mục 
-	ZeroMemory(&bi, sizeof(bi));   // lệnh này để reset kiểu giải phóng nếu có dữ liệu cũ
+	BROWSEINFO bi;  // bi như là tên 1 hộp chứa thông tin hộp thoại chọn thư mục 
+	ZeroMemory(&bi, sizeof(bi));   // Lệnh này để reset kiểu giải phóng nếu có dữ liệu cũ
 	bi.hwndOwner = m_hWnd; // m_hWnd là cửa sổ chính của chương trình.
 	LPITEMIDLIST pIdl = SHBrowseForFolder(&bi);   // SHBrowseForFolder là hàm mở hộp thoại chọn thư mục
 	// pIdl gọi như là nơi ghi địa chỉ của thư mục đã chọn 
-	if (pIdl != NULL) 
+	if (pIdl != NULL)
 	{
-		TCHAR szPath[_MAX_PATH]; 
-		//TCHAR là kiểu ký tự (có thể là char hoặc wchar_t).
-		//szPath[_MAX_PATH] → một chiếc hộp(mảng) đủ lớn để chứa đường dẫn thư mục, tối đa _MAX_PATH ký tự(~260).
-		szPath[0] = '\0'; // Đặt ký tự đầu tiên = \0 nghĩa là xóa sạch nội dung cũ trước khi ghi cái khác vào 
+		wchar_t szPath[_MAX_PATH];
+		szPath[0] = L'\0'; // Đặt ký tự đầu tiên = \0 nghĩa là xóa sạch nội dung cũ trước khi ghi cái khác vào 
 		if (SHGetPathFromIDList(pIdl, szPath)) // SHGetPath... là lấy đường dẫn từ pIdl cho xuất vào szPath
 		{
 			text_path.SetWindowTextW(szPath); // Hiển thị trên text_box của UI
 		}
 	}
-}				
+}
 
 void CHelloWorldMFCDlg::OnBnClickedButton_save()
 {
 	// Khai báo kiểm tra các mục đã được chọn chưa 
-	TCHAR folderPath[MAX_PATH];
-	GetDlgItemText(IDC_TEXT_path, folderPath, MAX_PATH); // lấy đường dẫn thư mục vừa chọn bên trên gán vào folderPath bao gồm ID; tên biến; kích thước tối đa
+	wchar_t folderPath[MAX_PATH];
+	GetDlgItemText(IDC_TEXT_path, folderPath, MAX_PATH); // lấy đường dẫn thư mục vừa chọn bên trên gán vào folderPath
 
-	if (_tcslen(folderPath) == 0) //_tcslen hàm tính độ dài chuỗi TCHAR.
+	if (wcslen(folderPath) == 0) // wcslen tính độ dài chuỗi wchar_t
 	{
-		MessageBox(_T("Please choose a folder first"), _T(" ⚠️ Warning!!!"), MB_OK);
+		MessageBox(L"Please choose a folder first", L" ⚠️ Warning!!!", MB_OK);
 		return;
 	}
 
-	TCHAR content[4096];
-	GetDlgItemText(IDC_EDIT_editbox, content, 4096); // lấy nội dung đã nhập trong edit box gán vào content < tương tự như trên> 
+	wchar_t content[4096];
+	GetDlgItemText(IDC_EDIT_editbox, content, 4096); // lấy nội dung đã nhập trong edit box gán vào content 
 
-	if (_tcslen(content) == 0) // _tcslen hàm để tính độ dài chuỗi TCHAR.
+	if (wcslen(content) == 0) // wcslen tính độ dài chuỗi wchar_t
 	{
-		MessageBox(_T("Please text something"), _T(" ⚠️ Warning!!!"), MB_OK);
+		MessageBox(L"Please text something", L" ⚠️ Warning!!!", MB_OK);
 		return;
 	}
 
-	TCHAR szFile[MAX_PATH] = _T(""); // Tạo một mảng ký tự để lưu tên file - mảng rỗng
-	OPENFILENAME ofn;  // cấu trúc khởi tạo cấu hình save/open files  // ofn :open file name
+	wchar_t szFile[MAX_PATH] = L""; // Tạo một mảng wchar_t để lưu tên file - mảng rỗng
+	OPENFILENAME ofn;  // cấu trúc khởi tạo cấu hình save/open files 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn); // khởi tạo kích thước là ofn để đọc đúng dữ liệu
-	ofn.hwndOwner = m_hWnd; // set là hiển thị ở cửa số chính
+	ofn.hwndOwner = m_hWnd; // set là hiển thị ở cửa sổ chính
 	ofn.lpstrFile = szFile;  // hiển thị hộp thoại để tự đặt tên file lưu vào folder
-	ofn.nMaxFile = MAX_PATH; // đặt kích thước cho tên file là tối đa để ko bị vượt quá 
+	ofn.nMaxFile = MAX_PATH; // đặt kích thước cho tên file là tối đa để không bị vượt quá 
 	ofn.lpstrInitialDir = folderPath;  // mở thư mục đã chọn 
-	ofn.lpstrFilter = _T("Text Documents\0*.txt\0All Files\0*.*\0"); // chỉ hiển thị txt hoặc all files
+	ofn.lpstrFilter = L"Text Documents\0*.txt\0All Files\0*.*\0"; // chỉ hiển thị txt hoặc all files
 	ofn.nFilterIndex = 1;
-	ofn.lpstrDefExt = _T("txt");  // tự động thêm .txt cho file
+	ofn.lpstrDefExt = L"txt";  // tự động thêm .txt cho file
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT; // OFN_OVERWRITEPROMPT là nếu file trùng tên, hỏi có muốn ghi đè không.
 
 	if (GetSaveFileName(&ofn)) // bắt đầu hiển thị hộp thoại lưu file
@@ -226,54 +223,55 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 		// create_always là luôn tạo file mới nếu có tên tồn tại thì ghi đè 
 		if (hFile != INVALID_HANDLE_VALUE)  // kiểm tra xem đã thành công chưa 
 		{
-			DWORD dwWritten;
-			WriteFile(hFile, content, (DWORD)(_tcslen(content) * sizeof(TCHAR)), &dwWritten, NULL); // oke thì viết vào file từ kích thước của content
+			DWORD dwWritten; // khai báo viết vào file
+			WriteFile(hFile, content, (DWORD)(wcslen(content) * sizeof(wchar_t)), &dwWritten, NULL); // ghi vào file từ kích thước của content
 			CloseHandle(hFile);
-			MessageBox(_T("Save file successfully!"), _T(" ⚠️ Warning!!!"), MB_OK);
+			MessageBox(L"Save file successfully!", L" ⚠️ Warning!!!", MB_OK);
 		}
 	}
 }
 
 void CHelloWorldMFCDlg::OnBnClickedButton_load()
 {
-	TCHAR folderPath[MAX_PATH];
+	wchar_t folderPath[MAX_PATH];
 	GetDlgItemText(IDC_TEXT_path, folderPath, MAX_PATH); // lấy đường dẫn 
 
-	if (_tcslen(folderPath) == 0) // _tcslen là hàm tính độ dài chuỗi Tchar
+	if (wcslen(folderPath) == 0) // wcslen là hàm tính độ dài chuỗi wchar_t
 	{
-		MessageBox(_T("Please choose a folder first!"), _T(" ⚠️ Warninggg !!!"), MB_OK);
+		MessageBox(L"Please choose a folder first!", L" ⚠️ Warninggg !!!", MB_OK);
 		return;
 	}
 
-	TCHAR szFile[MAX_PATH] = _T(""); // khời tạo 1 mảng rỗng đọc tên
-	OPENFILENAME ofn;
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = m_hWnd;
-	ofn.lpstrFile = szFile;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrInitialDir = folderPath;
-	ofn.lpstrFilter = _T("Text Documents\0*.txt\0All Files\0*.*\0");
+	wchar_t szFile[MAX_PATH] = L""; // khởi tạo 1 mảng rỗng đọc tên file
+	OPENFILENAME ofn; 
+	ZeroMemory(&ofn, sizeof(ofn)); // giải phỏng toàn bộ nếu có dữ liệu cũ
+	ofn.lStructSize = sizeof(ofn); // khởi tạo kích thước là ofn để đọc đúng dữ liệu
+	ofn.hwndOwner = m_hWnd;// // set là hiển thị ở cửa sổ chính
+	ofn.lpstrFile = szFile;  // hiển thị hộp thoại để tự đặt tên file lưu vào folder
+	ofn.nMaxFile = MAX_PATH; // đặt kích thước cho tên file là tối đa để không bị vượt quá 
+	ofn.lpstrInitialDir = folderPath;  // mở thư mục đã chọn 
+	ofn.lpstrFilter = L"Text Documents\0*.txt\0All Files\0*.*\0"; // chỉ hiển thị txt hoặc all files
 	ofn.nFilterIndex = 1;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST; // check xem file có tồn tại không 
 
-	if (GetOpenFileName(&ofn))  // bắt đầu mở hộp thoại lưu file 
+	if (GetOpenFileName(&ofn))  // bắt đầu mở hộp thoại đã lưu file 
 	{
-		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, NULL, // tạo file mới 
+		HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, NULL, //mở file vừa chọn để đọc 
 			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile != INVALID_HANDLE_VALUE)
 		{
-			DWORD dwRead;
-			TCHAR buf[4096] = { 0 };
-			ReadFile(hFile, buf, sizeof(buf) - sizeof(TCHAR), &dwRead, NULL);
-			buf[dwRead / sizeof(TCHAR)] = 0;
+			DWORD dwRead; // khai báo biến dwRead  sẽ lưu số byte đọc được từ file 
+			wchar_t detail[4096] = { 0 };// tạo mảng chứa nội dung file
+			ReadFile(hFile, detail, sizeof(detail) - sizeof(wchar_t), &dwRead, NULL); // đọc dữ liệu từ file vào detail
+			detail[dwRead / sizeof(wchar_t)] = L'\0'; // chuyển byte đã đọc thành kí tự 
 			CloseHandle(hFile);
 
-			SetDlgItemText(IDC_EDIT_editbox, buf);
-			MessageBox(_T("Load file successfully!"), _T(" ⚠️ Warningg!!!"), MB_OK);
+			SetDlgItemText(IDC_EDIT_editbox, detail); // hiển thị nội dung đã đọc vào edit box
+			MessageBox(L"Load file successfully!", L" ⚠️ Warningg!!!", MB_OK);
 		}
 	}
 }
+
 void CHelloWorldMFCDlg::OnEnChangeEdit_editbox()
 {
 	 //TODO:  If this is a RICHEDIT control, the control will not
