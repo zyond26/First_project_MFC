@@ -1,5 +1,4 @@
-﻿
-// HelloWorldMFCDlg.cpp : implementation file
+﻿// HelloWorldMFCDlg.cpp : implementation file
 //
 
 #include "pch.h"
@@ -7,8 +6,6 @@
 #include "HelloWorldMFC.h"
 #include "HelloWorldMFCDlg.h"
 #include "afxdialogex.h"
-
-using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -131,7 +128,8 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 
 	wchar_t szFile[MAX_PATH] = L""; // khởi tạo mảng rỗng để đọc tên file 
 	OPENFILENAME ofn = { sizeof(ofn) }; // Khởi tạo biến ofn – struct chứa cấu hình cho hộp thoại "Save As".
-  //	Cú pháp{ sizeof(ofn) } giúp gán trước kích thước của struct (thay vì dùng ZeroMemory).
+	//	Cú pháp{ sizeof(ofn) } giúp gán trước kích thước của struct (thay vì dùng ZeroMemory).
+	ofn.lStructSize = sizeof(ofn); // kích thước của struct đúng 
 	ofn.hwndOwner = m_hWnd; //gán cửa sổ chính làm cửa sổ cha
 	ofn.lpstrFile = szFile; // cho biết địa chỉ bộ nhớ - nơi sẽ lưu đường dẫn file 
 	ofn.nMaxFile = MAX_PATH; // đặt kích thước tối đa là 260 kí tụ 
@@ -146,12 +144,12 @@ void CHelloWorldMFCDlg::OnBnClickedButton_save()
 	wcscpy_s(fileName, ofn.lpstrFile);// copy tên file đã chọn
 	//- ofn.lpstrFile là chuỗi con trỏ (`wchar_t*`) tạm thời
 	// copy nó vào `fileName` là biến ổn định đã đặt, dùng tiếp được nhiều lần
-	
+
 	// Kiểm tra quyền ghi - readonly
 	DWORD attr = GetFileAttributes(fileName);
 	if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY)) {
-	/*	INVALID_FILE_ATTRIBUTES → File không tồn tại, trả về `0xFFFFFFFF`
-		(attr & FILE_ATTRIBUTE_READONLY) → Kiểm tra xem file có cờ "chỉ đọc" hay không*/
+		/*	INVALID_FILE_ATTRIBUTES → File không tồn tại, trả về `0xFFFFFFFF`
+			(attr & FILE_ATTRIBUTE_READONLY) → Kiểm tra xem file có cờ "chỉ đọc" hay không*/
 		MessageBox(L"The file is read-only.", L"❌ Error", MB_OK | MB_ICONERROR);
 		return;
 	}
@@ -189,17 +187,21 @@ void CHelloWorldMFCDlg::OnBnClickedButton_load()
 	wchar_t szFile[MAX_PATH] = L""; // khởi tạo mảng rỗng chuỗi unicode để đọc tên file - Max_Path là 260 kí tự
 	OPENFILENAME ofn;// OPENFILENAME là struct chưa cấu hình cho hộp thoại mở file
 	ZeroMemory(&ofn, sizeof(ofn)); // giải phóng toàn bộ nếu có dữ liệu cũ
+	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = m_hWnd; // đặt là hiển thị ở cửa sổ chính
 	ofn.lpstrFile = szFile; // gán con trỏ đến mảng szfile - nơi sẽ lưu đường dẫn file đã chọn( tên file)
 	ofn.nMaxFile = MAX_PATH;// đặt độ dài tối da cho tên file là 260 kí tự
 	ofn.lpstrInitialDir = folderPath; // đặt thư mục mặc mở ra là folder đã chọn
 	ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files\0*.*\0"; // bộ lọc hiển thị các kiểu file sẽ lưu
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	// Các tùy chọn hộp thoại : 
 	// OFN_PATHMUSTEXIST: thư mục chọn phải tồn tại
 	//OFN_FILEMUSTEXIST: chỉ chọn được file có thật(không nhập linh tinh)
 
-	if (!GetOpenFileName(&ofn)) return; // hiển thị hộp thoại chọn file nếu ấn cancle hoặc lỗi sẽ bị thoát luôn
+	if (!GetOpenFileName(&ofn)) {
+		MessageBox(L"User cancelled or error in open file dialog", L"Info", MB_OK);
+		return;
+	}
 	HANDLE hFile = CreateFile(
 		ofn.lpstrFile,           // Tên file vừa chọn
 		GENERIC_READ,            // Mở để đọc
@@ -228,27 +230,14 @@ void CHelloWorldMFCDlg::OnBnClickedButton_load()
 
 	buffer[dwRead / sizeof(wchar_t)] = L'\0';  // chuyển byte đã đọc thành kí tự 
 
-	CloseHandle(hFile); 
+	CloseHandle(hFile);
 	SetDlgItemText(IDC_EDIT_editbox, buffer); // hiển thị nội dung đã đọc vào edit box
 	MessageBox(L"File loaded successfully!", L"✅ Done", MB_OK | MB_ICONINFORMATION);
 }
 
 void CHelloWorldMFCDlg::OnEnChangeEdit_editbox()
 {
-	 //TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
 }
 void CHelloWorldMFCDlg::OnEnChangeEdit_textpath()
 {
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
 }
-
