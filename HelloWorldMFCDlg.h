@@ -42,4 +42,6 @@ protected:
 	CButton btn_choose;
 	CEdit edit_box;
 	CEdit text_path;
+public:
+	afx_msg void OnEnChangeEditeditbox();
 };
