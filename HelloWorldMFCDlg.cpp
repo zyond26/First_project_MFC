@@ -229,7 +229,10 @@ void CHelloWorldMFCDlg::OnBnClickedButton_load()
 	}
 
 	buffer[dwRead / sizeof(wchar_t)] = L'\0';  // chuyển byte đã đọc thành kí tự 
-
+	//dwRead là số byte mà hàm ReadFile đã đọc được từ file vào buffer.
+	//buffer là mảng kiểu wchar_t, mỗi phần tử là 2 byte(thường).
+	//dwRead đếm theo byte, còn chỉ số mảng buffer[...] thì đếm theo số ký tự(mỗi ký tự là 1 wchar_t).
+	//=> số ký tự đã đọc =lấy tổng số byte đã đọc(dwRead), chia cho kích thước mỗi ký tự(sizeof(wchar_t)).
 	CloseHandle(hFile);
 	SetDlgItemText(IDC_EDIT_editbox, buffer); // hiển thị nội dung đã đọc vào edit box
 	MessageBox(L"File loaded successfully!", L"✅ Done", MB_OK | MB_ICONINFORMATION);
